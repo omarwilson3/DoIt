@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  TasksViewController.swift
 //  DoIt
 //
 //  Created by Omar Wilson on 10/18/16.
@@ -8,11 +8,15 @@
 
 import UIKit
 
-class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class TasksViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+    
+    
 
+    
     @IBOutlet weak var tableView: UITableView!
     
     var tasks : [Task] = []
+    var selectedIndex = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,11 +28,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tableView.dataSource = self
         tableView.delegate = self
     }
-
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return tasks.count
     }
-
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell()
         let task = tasks[indexPath.row]
@@ -38,9 +42,15 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         } else {
             cell.textLabel?.text = task.name
         }
-        
-        
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        selectedIndex = indexPath.row
+        
+        let task = tasks[indexPath.row]
+        performSegue(withIdentifier: "selectTaskSegue", sender: task)
     }
     
     func makeTask() -> [Task] {
@@ -58,9 +68,22 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         return [task1, task2, task3]
     }
-
+    
     @IBAction func plusTapped(_ sender: AnyObject) {
         performSegue(withIdentifier: "addSegue", sender: nil)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "addSegue" {
+            let nextViewController = segue.destination as! CreateTaskViewController
+            nextViewController.previousViewController = self
+        }
+        
+        if segue.identifier == "selectTaskSegue" {
+            let nextViewController = segue.destination as! CompleteTaskViewController
+            nextViewController.task = sender as! Task
+            nextViewController.previousViewController = self
+        }
     }
 }
 
