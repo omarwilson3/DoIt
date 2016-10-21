@@ -11,24 +11,25 @@ import UIKit
 class CompleteTaskViewController: UIViewController {
     
     @IBOutlet weak var taskLabel: UILabel!
-    var task = Task()
-     var previousViewController = TasksViewController()
+    var task : Task? = nil
+    // var previousViewController = TasksViewController()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if task.important {
-            taskLabel.text = "❗️ \(task.name)"
+        if task!.important {
+            taskLabel.text = "❗️ \(task!.name!)"
         } else {
-            taskLabel.text = task.name
+            taskLabel.text = task!.name!
         }
 
     }
 
     @IBAction func competeTapped(_ sender: AnyObject) {
-        previousViewController.tasks.remove(at: previousViewController.selectedIndex)
-        previousViewController.tableView.reloadData()
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        context.delete(task!)
         navigationController!.popViewController(animated: true)
+        (UIApplication.shared.delegate as! AppDelegate).saveContext()
     }
 
 
